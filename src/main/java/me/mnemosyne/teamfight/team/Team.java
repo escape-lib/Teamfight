@@ -23,6 +23,7 @@ public class Team {
     public Team(Player teamLeader) {
         memberList = new ArrayList<>();
         captainList = new ArrayList<>();
+        pendingInviteRequests = new ArrayList<>();
 
         this.teamUUID = UUID.randomUUID();
         this.teamLeaderUUID = teamLeader.getUniqueId();

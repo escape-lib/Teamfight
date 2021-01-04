@@ -32,10 +32,16 @@ public class TeamfightPlugin extends JavaPlugin {
     @Getter private String alreadyInTeamMessage;
     @Getter private String inFightMessage;
     @Getter private String notLeaderMessage;
-    @Getter private String noTeamFound;
+    @Getter private String noTeamFoundMessage;
     @Getter private String invitingMessage;
     @Getter private String playerIsInTeamMessage;
+    @Getter private String playerUninviteIsInTeamMessage;
     @Getter private String teamExistsMessage;
+    @Getter private String isInvitingToTeamMessage;
+    @Getter private String uninvitingTeamMessage;
+    @Getter private String uninviteMessage;
+    @Getter private String alreadyInvitedPlayerMessage;
+    @Getter private String doesNotHaveInviteMessage;
 
     @Getter private JedisPool jedisPool;
     @Getter private TeamManager teamManager;
@@ -56,7 +62,7 @@ public class TeamfightPlugin extends JavaPlugin {
                 "\n\n" + chatSpacer + "\n&7&l-Team Commands-\n\n" +
                         "&f/t create &7<teamName>\n" +
                         "&f/t show &7<teamName|playerName>\n" +
-                        "&f/t accept &7<teamName>\n" +
+                        "&f/t join &7<teamName>\n" +
                         "&f/t invite &7<player>\n" +
                         "&f/t uninvite &7<player>\n" +
                         "&f/t kick &7<player>\n" +
@@ -66,14 +72,20 @@ public class TeamfightPlugin extends JavaPlugin {
         noPermissionMessage = ChatColourUtil.convert("&cYou do not have permission to execute this command.");
         offlinePlayerMessage = ChatColourUtil.convert("&cThat player is offline!");
         notInTeamMessage = ChatColourUtil.convert("&7You are not in a team!");
-        suitableNameMessage = ChatColourUtil.convert("&cTeam name must be alphanumeric and 16 characters or less in length!");
+        suitableNameMessage = ChatColourUtil.convert("&cTeam name must be alphanumeric and between 3 and 16 characters in length!");
         alreadyInTeamMessage = ChatColourUtil.convert("&cYou are already in a team!");
         inFightMessage = ChatColourUtil.convert("&cYou cannot do this while in a fight!");
         notLeaderMessage = ChatColourUtil.convert("&cYou are not the leader of this team!");
-        noTeamFound = ChatColourUtil.convert("&cNo matching team or member with name %udefined%.");
-        invitingMessage = ChatColourUtil.convert("&7%inviting_player% &fis inviting you to join the team &6%team_name%&f. Please type &7/t join %team_name% &fto join the team.");
+        noTeamFoundMessage = ChatColourUtil.convert("&cNo matching team or member with name %udefined%");
+        invitingMessage = ChatColourUtil.convert("&7%inviting_player% &fis inviting you to join the team &6%team_name%&f. Please type &7/t join %team_name% &fto join the team");
         playerIsInTeamMessage = ChatColourUtil.convert("&cYou cannot invite players that are in your team!");
+        playerUninviteIsInTeamMessage = ChatColourUtil.convert("&cYou cannot invite players that are in your team!");
         teamExistsMessage = ChatColourUtil.convert("&cTeam with name %team_name% already exists!");
+        isInvitingToTeamMessage = ChatColourUtil.convert("&7%inviting_player% &fhas invited &7%invited_player% &fto join the team");
+        uninvitingTeamMessage = ChatColourUtil.convert("&7%inviting_player% &fhas uninvited &7%invited_player%");
+        uninviteMessage = ChatColourUtil.convert("&fYou have been uninvited from joining the team &7%team_name%");
+        alreadyInvitedPlayerMessage = ChatColourUtil.convert("&cThis player has already been invited to the team!");
+        doesNotHaveInviteMessage = ChatColourUtil.convert("&cThis player does not have an invite to the team!");
 
 
         teamManager = new TeamManager();

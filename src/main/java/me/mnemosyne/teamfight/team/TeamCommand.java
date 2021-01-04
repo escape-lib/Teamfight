@@ -29,7 +29,7 @@ public class TeamCommand implements CommandExecutor {
                 teamSubcommandHandler.createTeam();
                 break;
 
-            case "accept":
+            case "join":
 
                 break;
 
