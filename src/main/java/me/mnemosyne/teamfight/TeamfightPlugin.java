@@ -79,7 +79,7 @@ public class TeamfightPlugin extends JavaPlugin {
         noTeamFoundMessage = ChatColourUtil.convert("&cNo matching team or member with name %udefined%");
         invitingMessage = ChatColourUtil.convert("&7%inviting_player% &fis inviting you to join the team &6%team_name%&f. Please type &7/t join %team_name% &fto join the team");
         playerIsInTeamMessage = ChatColourUtil.convert("&cYou cannot invite players that are in your team!");
-        playerUninviteIsInTeamMessage = ChatColourUtil.convert("&cYou cannot invite players that are in your team!");
+        playerUninviteIsInTeamMessage = ChatColourUtil.convert("&cYou cannot uninvite players that are in your team!");
         teamExistsMessage = ChatColourUtil.convert("&cTeam with name %team_name% already exists!");
         isInvitingToTeamMessage = ChatColourUtil.convert("&7%inviting_player% &fhas invited &7%invited_player% &fto join the team");
         uninvitingTeamMessage = ChatColourUtil.convert("&7%inviting_player% &fhas uninvited &7%invited_player%");
