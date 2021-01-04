@@ -1,6 +1,7 @@
 package me.mnemosyne.teamfight.scoreboard;
 
 import fr.mrmicky.fastboard.FastBoard;
+import me.mnemosyne.teamfight.TeamfightPlugin;
 import me.mnemosyne.teamfight.configmanager.ConfigStore;
 import me.mnemosyne.teamfight.user.User;
 import org.bukkit.Bukkit;
@@ -37,7 +38,7 @@ public class ScoreboardManager {
 
             format = format.replace("%scoreboard_spacer%", ConfigStore.getScoreboardSpacer());
             format = format.replace("%online_players%", Integer.toString(Bukkit.getOnlinePlayers().size()));
-            format = format.replace("%teams_online%", Integer.toString(0));
+            format = format.replace("%teams_online%", Integer.toString(TeamfightPlugin.getInstance().getTeamManager().getTeamList().size()));
             format = format.replace("%tps%", Double.toString(tpsPrecision));
 
         }
