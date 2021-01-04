@@ -83,6 +83,10 @@ public class TeamSubcommandHandler {
         } else if (!user.isInSpawn()){
             player.sendMessage(TeamfightPlugin.getInstance().getInFightMessage());
             return;
+
+        } else if (TeamfightPlugin.getInstance().getTeamManager().teamExists(args[1])){
+            player.sendMessage(TeamfightPlugin.getInstance().getTeamExistsMessage().replace("%team_name", args[1]));
+            return;
         }
 
         Team team = new Team(player);

@@ -35,6 +35,7 @@ public class TeamfightPlugin extends JavaPlugin {
     @Getter private String noTeamFound;
     @Getter private String invitingMessage;
     @Getter private String playerIsInTeamMessage;
+    @Getter private String teamExistsMessage;
 
     @Getter private JedisPool jedisPool;
     @Getter private TeamManager teamManager;
@@ -72,6 +73,7 @@ public class TeamfightPlugin extends JavaPlugin {
         noTeamFound = ChatColourUtil.convert("&cNo matching team or member with name %udefined%.");
         invitingMessage = ChatColourUtil.convert("&7%inviting_player% &fis inviting you to join the team &6%team_name%&f. Please type &7/t join %team_name% &fto join the team.");
         playerIsInTeamMessage = ChatColourUtil.convert("&cYou cannot invite players that are in your team!");
+        teamExistsMessage = ChatColourUtil.convert("&cTeam with name %team_name% already exists!");
 
 
         teamManager = new TeamManager();

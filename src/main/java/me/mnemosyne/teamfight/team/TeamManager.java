@@ -98,4 +98,14 @@ public class TeamManager {
         Collection<Team>teamNoDupe = teams.stream().distinct().collect(Collectors.toList());
         return teamNoDupe;
     }
+
+    public boolean teamExists(String teamName){
+        for(Team itTeam : teamList){
+            if(itTeam.getTeamName().equalsIgnoreCase(teamName)){
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
