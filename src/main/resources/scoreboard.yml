@@ -1,0 +1,20 @@
+scoreboard_title: "&f&lHera &7(Dev)"
+scoreboard_spacer: "&7&m-------------------"
+
+# Spawn Scoreboard
+spawn_scoreboard: |-
+  %scoreboard_spacer%
+  &7Online: &f%online_players%
+  &7Teams: &f%teams_online%
+
+  &7hera.gg
+  %scoreboard_spacer%
+
+spawn_staff_scoreboard: |-
+  %scoreboard_spacer%
+  &7Online: &f%online_players%
+  &7Teams: &f%teams_online%
+  &7TPS: &f%tps%
+
+  &7hera.gg
+  %scoreboard_spacer%

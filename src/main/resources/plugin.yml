@@ -1,0 +1,11 @@
+name: Teamfight
+main: me.mnemosyne.teamfight.TeamfightPlugin
+version: 0.1
+
+commands:
+  build:
+    description: Toggles build mode
+
+  team:
+    description: Manage your team
+    aliases: [t, f, faction]
