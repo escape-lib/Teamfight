@@ -11,10 +11,10 @@ import java.util.Collection;
 import java.util.UUID;
 
 public class TeamSubcommandHandler {
-    private final Player player;
-    private final String[] args;
-    private final Team userTeam;
-    private final User user;
+    private Player player;
+    private String[] args;
+    private Team userTeam;
+    private User user;
 
     public TeamSubcommandHandler(Player player, String[] args){
         this.player = player;
