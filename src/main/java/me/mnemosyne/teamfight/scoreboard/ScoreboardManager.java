@@ -29,10 +29,10 @@ public class ScoreboardManager {
             String dateStr = dateFormat.format(today);
              */
 
-            Double tps = Bukkit.getServer().spigot().getTPS()[0];
+            double tps = Bukkit.getServer().spigot().getTPS()[0];
             if(tps > 20) { tps = 20.0; }
 
-            Double tpsPrecision = BigDecimal.valueOf(tps)
+            double tpsPrecision = BigDecimal.valueOf(tps)
                     .setScale(1, RoundingMode.HALF_EVEN)
                     .doubleValue();
 

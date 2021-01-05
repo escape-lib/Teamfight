@@ -11,7 +11,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.UUID;
 
 public class TeamPrefixChatListener implements Listener {
     @EventHandler

@@ -95,8 +95,7 @@ public class TeamManager {
             return null;
         }
 
-        Collection<Team>teamNoDupe = teams.stream().distinct().collect(Collectors.toList());
-        return teamNoDupe;
+        return teams.stream().distinct().collect(Collectors.toList());
     }
 
     public boolean teamExists(String teamName){

@@ -12,12 +12,10 @@ import java.io.IOException;
 
 public class ConfigLoad {
     private File messagesFile;
-    private File mongoFile;
     private File redisFile;
     private File scoreboardFile;
 
     private FileConfiguration messagesConfig;
-    private FileConfiguration mongoConfig;
     private FileConfiguration redisConfig;
     private FileConfiguration scoreboardConfig;
 
@@ -32,10 +30,6 @@ public class ConfigLoad {
         CustomConfigHolder messagesHolder = createCustomConfig(messagesFile, messagesConfig, "messages.yml", "/messages/");
         this.messagesFile = messagesHolder.getFile();
         this.messagesConfig = messagesHolder.getConfig();
-
-        CustomConfigHolder mongoHolder = createCustomConfig(mongoFile, mongoConfig, "mongo.yml", "/database/");
-        this.mongoFile = mongoHolder.getFile();
-        this.mongoConfig = mongoHolder.getConfig();
 
         CustomConfigHolder redisHolder = createCustomConfig(redisFile, redisConfig, "redis.yml", "/database/");
         this.redisFile = redisHolder.getFile();

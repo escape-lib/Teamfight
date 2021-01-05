@@ -11,10 +11,10 @@ import java.util.Collection;
 import java.util.UUID;
 
 public class TeamSubcommandHandler {
-    private Player player;
-    private String[] args;
-    private Team userTeam;
-    private User user;
+    private final Player player;
+    private final String[] args;
+    private final Team userTeam;
+    private final User user;
 
     public TeamSubcommandHandler(Player player, String[] args){
         this.player = player;
@@ -154,12 +154,12 @@ public class TeamSubcommandHandler {
             player.sendMessage(ChatColourUtil.convert("&f/t invite &7<player>"));
             return;
 
-        } else if (!userTeam.isLeader(player)){
-            player.sendMessage(TeamfightPlugin.getInstance().getNotLeaderMessage());
-            return;
-
         } else if(userTeam == null){
             player.sendMessage(TeamfightPlugin.getInstance().getNotInTeamMessage());
+            return;
+
+        } else if (!userTeam.isLeader(player)){
+            player.sendMessage(TeamfightPlugin.getInstance().getNotLeaderMessage());
             return;
 
         } else if (!user.isInSpawn()){
@@ -207,12 +207,12 @@ public class TeamSubcommandHandler {
             player.sendMessage(ChatColourUtil.convert("&f/t uninvite &7<player>"));
             return;
 
-        } else if (!userTeam.isLeader(player)){
-            player.sendMessage(TeamfightPlugin.getInstance().getNotLeaderMessage());
-            return;
-
         } else if(userTeam == null){
             player.sendMessage(TeamfightPlugin.getInstance().getNotInTeamMessage());
+            return;
+
+        } else if (!userTeam.isLeader(player)){
+            player.sendMessage(TeamfightPlugin.getInstance().getNotLeaderMessage());
             return;
 
         } else if (!user.isInSpawn()){
