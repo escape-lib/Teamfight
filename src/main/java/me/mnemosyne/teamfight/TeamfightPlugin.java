@@ -42,6 +42,10 @@ public class TeamfightPlugin extends JavaPlugin {
     @Getter private String uninviteMessage;
     @Getter private String alreadyInvitedPlayerMessage;
     @Getter private String doesNotHaveInviteMessage;
+    @Getter private String localDoesNotHaveInviteMessage;
+    @Getter private String playerHasJoinedTeamMessage;
+    @Getter private String playerHasBeenKickedMessage;
+    @Getter private String localPlayerHasBeenKickedMessage;
 
     @Getter private JedisPool jedisPool;
     @Getter private TeamManager teamManager;
@@ -86,6 +90,10 @@ public class TeamfightPlugin extends JavaPlugin {
         uninviteMessage = ChatColourUtil.convert("&fYou have been uninvited from joining the team &7%team_name%");
         alreadyInvitedPlayerMessage = ChatColourUtil.convert("&cThis player has already been invited to the team!");
         doesNotHaveInviteMessage = ChatColourUtil.convert("&cThis player does not have an invite to the team!");
+        localDoesNotHaveInviteMessage = ChatColourUtil.convert("&cYou do not have an invite to this team!");
+        playerHasJoinedTeamMessage = ChatColourUtil.convert("&7%player_name% &fhas joined the team!");
+        playerHasBeenKickedMessage = ChatColourUtil.convert("&7%player_name% &fhas been kicked from the team!");
+        localPlayerHasBeenKickedMessage = ChatColourUtil.convert("&fYou have been kicked from the team &7%team_name%");
 
 
         teamManager = new TeamManager();

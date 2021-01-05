@@ -107,4 +107,14 @@ public class TeamManager {
 
         return false;
     }
+
+    public Team getTeamByName(String teamName){
+        for(Team itTeam : teamList){
+            if(itTeam.getTeamName().equalsIgnoreCase(teamName)){
+                return itTeam;
+            }
+        }
+
+        return null;
+    }
 }

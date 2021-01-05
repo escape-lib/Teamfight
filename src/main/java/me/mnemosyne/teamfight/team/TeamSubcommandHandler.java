@@ -138,8 +138,7 @@ public class TeamSubcommandHandler {
         Collection<Team>teamsToBeShown = TeamfightPlugin.getInstance().getTeamManager().getTeamsFromPlayerOrTeamName(args[1]);
 
         if(teamsToBeShown == null){
-            String message = TeamfightPlugin.getInstance().getNoTeamFoundMessage();
-            player.sendMessage(message.replace("%udefined%", args[1]));
+            player.sendMessage(TeamfightPlugin.getInstance().getNoTeamFoundMessage().replace("%udefined%", args[1]));
 
             return;
         }
@@ -255,21 +254,71 @@ public class TeamSubcommandHandler {
     }
 
     public void joinTeam(){
+        if(args.length == 1){
+            player.sendMessage(ChatColourUtil.convert("&f/t join &7<teamName>"));
+            return;
 
+        } else if(userTeam != null){
+            player.sendMessage(TeamfightPlugin.getInstance().getAlreadyInTeamMessage());
+            return;
+
+        } else if (!TeamfightPlugin.getInstance().getTeamManager().teamExists(args[1])){
+            player.sendMessage(TeamfightPlugin.getInstance().getNoTeamFoundMessage().replace("%udefined%", args[1]));
+            return;
+        }
+
+        Team teamToBeJoined = TeamfightPlugin.getInstance().getTeamManager().getTeamByName(args[1]);
+        Collection<UUID>pendingInvites = new ArrayList<>(teamToBeJoined.getPendingInviteRequests());
+
+        if(!pendingInvites.contains(player.getUniqueId())){
+            player.sendMessage(TeamfightPlugin.getInstance().getLocalDoesNotHaveInviteMessage());
+            return;
+        }
+
+        pendingInvites.remove(player.getUniqueId());
+        Collection<UUID> memberList = teamToBeJoined.getMemberList();
+        memberList.add(player.getUniqueId());
+
+        teamToBeJoined.sendMessageToTeam(TeamfightPlugin.getInstance().getPlayerHasJoinedTeamMessage().replace("%player_name%", player.getName()));
+
+        TeamfightPlugin.getInstance().getTeamManager().updateTeam(teamToBeJoined);
     }
 
     public void kickPlayer(){
-        if(args.length == 1){
-            player.sendMessage(ChatColourUtil.convert("&f/t kick &7<player>"));
+        if(args.length == 1) {
+            player.sendMessage(ChatColourUtil.convert("&f/t invite &7<player>"));
             return;
 
         } else if(userTeam == null){
             player.sendMessage(TeamfightPlugin.getInstance().getNotInTeamMessage());
             return;
 
+        } else if (!userTeam.isLeader(player)){
+            player.sendMessage(TeamfightPlugin.getInstance().getNotLeaderMessage());
+            return;
+
         } else if (!user.isInSpawn()){
             player.sendMessage(TeamfightPlugin.getInstance().getInFightMessage());
             return;
         }
+
+        Player targetPlayer = Bukkit.getPlayer(args[1]);
+        if(targetPlayer == null){
+            player.sendMessage(TeamfightPlugin.getInstance().getOfflinePlayerMessage());
+            return;
+
+        } else if(userTeam.getUUIDList().contains(targetPlayer.getUniqueId())) {
+            player.sendMessage(TeamfightPlugin.getInstance().getPlayerIsInTeamMessage());
+            return;
+
+        }
+
+        Collection<UUID>UUIDList = userTeam.getUUIDList();
+        UUIDList.remove(player.getUniqueId());
+
+        player.sendMessage(TeamfightPlugin.getInstance().getLocalPlayerHasBeenKickedMessage());
+        userTeam.sendMessageToTeam(TeamfightPlugin.getInstance().getPlayerHasBeenKickedMessage());
+
+        TeamfightPlugin.getInstance().getTeamManager().updateTeam(userTeam);
     }
 }
