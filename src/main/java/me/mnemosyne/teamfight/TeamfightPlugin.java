@@ -148,6 +148,7 @@ public class TeamfightPlugin extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new DebugChatListener(), this);
         this.getServer().getPluginManager().registerEvents(new TeamPrefixChatListener(), this);
         this.getServer().getPluginManager().registerEvents(new JoinCacheListener(), this);
+        this.getServer().getPluginManager().registerEvents(new UnacceptedCommandListener(), this);
     }
 
     private void setupCommands(){
