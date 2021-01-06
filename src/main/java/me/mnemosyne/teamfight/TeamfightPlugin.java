@@ -6,6 +6,7 @@ import me.mnemosyne.teamfight.cache.listener.JoinCacheListener;
 import me.mnemosyne.teamfight.command.BuildCommand;
 import me.mnemosyne.teamfight.configmanager.ConfigLoad;
 import me.mnemosyne.teamfight.configmanager.ConfigStore;
+import me.mnemosyne.teamfight.constant.Message;
 import me.mnemosyne.teamfight.listener.*;
 import me.mnemosyne.teamfight.nametag.NametagHandler;
 import me.mnemosyne.teamfight.scoreboard.ScoreboardManager;
@@ -25,34 +26,6 @@ public class TeamfightPlugin extends JavaPlugin {
     @Getter private static TeamfightPlugin instance;
     @Getter private static UserManager userManager;
 
-    @Getter private String teamUsageMessage;
-    @Getter private String chatSpacer;
-    @Getter private String noPermissionMessage;
-    @Getter private String offlinePlayerMessage;
-    @Getter private String notInTeamMessage;
-    @Getter private String suitableNameMessage;
-    @Getter private String alreadyInTeamMessage;
-    @Getter private String inFightMessage;
-    @Getter private String notLeaderMessage;
-    @Getter private String noTeamFoundMessage;
-    @Getter private String invitingMessage;
-    @Getter private String playerIsInTeamMessage;
-    @Getter private String playerUninviteIsInTeamMessage;
-    @Getter private String teamExistsMessage;
-    @Getter private String isInvitingToTeamMessage;
-    @Getter private String uninviteMessage;
-    @Getter private String alreadyInvitedPlayerMessage;
-    @Getter private String doesNotHaveInviteMessage;
-    @Getter private String localDoesNotHaveInviteMessage;
-    @Getter private String playerHasJoinedTeamMessage;
-    @Getter private String playerHasBeenKickedMessage;
-    @Getter private String localPlayerHasBeenKickedMessage;
-
-    @Getter private String teamPlayerHasLeftMessage;
-    @Getter private String localPlayerHasLeftMessage;
-    @Getter private String cannotDoThisAsLeaderMessage;
-
-
     @Getter private JedisPool jedisPool;
     @Getter private TeamManager teamManager;
     @Getter private ScoreboardManager scoreboardManager;
@@ -61,51 +34,13 @@ public class TeamfightPlugin extends JavaPlugin {
     @Getter private GeneralUtil generalUtil;
     @Getter private NametagHandler nametagHandler;
     @Getter private PlayerCache playerCache;
+    @Getter private Message message;
 
     @Override
     public void onEnable(){
 
         instance = this;
         userManager = new UserManager();
-
-        chatSpacer = ChatColourUtil.convert("&7&m--------------------------------");
-        teamUsageMessage = ChatColourUtil.convert(
-                "\n\n" + chatSpacer + "\n&7&l-Team Commands-\n\n" +
-                        "&f/t create &7<teamName>\n" +
-                        "&f/t show &7<teamName|playerName>\n" +
-                        "&f/t join &7<teamName>\n" +
-                        "&f/t invite &7<player>\n" +
-                        "&f/t uninvite &7<player>\n" +
-                        "&f/t kick &7<player>\n" +
-                        "&f/t leave\n" +
-                        "&f/t disband\n"
-                        + chatSpacer);
-
-        noPermissionMessage = ChatColourUtil.convert("&cYou do not have permission to execute this command.");
-        offlinePlayerMessage = ChatColourUtil.convert("&cThat player is offline!");
-        notInTeamMessage = ChatColourUtil.convert("&7You are not in a team!");
-        suitableNameMessage = ChatColourUtil.convert("&cTeam name must be alphanumeric and between 3 and 16 characters in length!");
-        alreadyInTeamMessage = ChatColourUtil.convert("&cYou are already in a team!");
-        inFightMessage = ChatColourUtil.convert("&cYou cannot do this while in a fight!");
-        notLeaderMessage = ChatColourUtil.convert("&cYou are not the leader of this team!");
-        noTeamFoundMessage = ChatColourUtil.convert("&cNo matching team or member with name %udefined%");
-        invitingMessage = ChatColourUtil.convert("&7%inviting_player% &fis inviting you to join the team &6%team_name%&f. Please type &7/t join %team_name% &fto join the team");
-        playerIsInTeamMessage = ChatColourUtil.convert("&cYou cannot invite players that are in your team!");
-        playerUninviteIsInTeamMessage = ChatColourUtil.convert("&cYou cannot uninvite players that are in your team!");
-        teamExistsMessage = ChatColourUtil.convert("&cTeam with name %team_name% already exists!");
-        isInvitingToTeamMessage = ChatColourUtil.convert("&7%inviting_player% &fhas invited &7%invited_player% &fto join the team");
-        uninviteMessage = ChatColourUtil.convert("&fYou have successfully uninvited this player.");
-        alreadyInvitedPlayerMessage = ChatColourUtil.convert("&cThis player has already been invited to the team!");
-        doesNotHaveInviteMessage = ChatColourUtil.convert("&cThis player does not have an invite to the team!");
-        localDoesNotHaveInviteMessage = ChatColourUtil.convert("&cYou do not have an invite to this team!");
-        playerHasJoinedTeamMessage = ChatColourUtil.convert("&7%player_name% &fhas joined the team!");
-        playerHasBeenKickedMessage = ChatColourUtil.convert("&7%player_name% &fhas been kicked from the team!");
-        localPlayerHasBeenKickedMessage = ChatColourUtil.convert("&fYou have been kicked from the team &7%team_name%");
-
-        cannotDoThisAsLeaderMessage = ChatColourUtil.convert("&cYou cannot do this while you are leader!");
-        localPlayerHasLeftMessage = ChatColourUtil.convert("&fYou have left the team");
-        teamPlayerHasLeftMessage = ChatColourUtil.convert("&7%player_name% &fhas left the team");
-
 
         teamManager = new TeamManager();
         generalUtil = new GeneralUtil();
@@ -114,6 +49,7 @@ public class TeamfightPlugin extends JavaPlugin {
         spawnScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         jedisPool = new JedisPool(ConfigStore.getRedisHost(), ConfigStore.getRedisPort());
         playerCache = new PlayerCache();
+        message = new Message();
 
         new ConfigLoad().load();
 

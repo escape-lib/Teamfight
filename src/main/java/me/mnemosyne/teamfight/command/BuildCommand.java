@@ -18,7 +18,7 @@ public class BuildCommand implements CommandExecutor {
         Player player = (Player) sender;
 
         if (!player.hasPermission("teamfight.build")) {
-            player.sendMessage(TeamfightPlugin.getInstance().getNoPermissionMessage());
+            player.sendMessage(TeamfightPlugin.getInstance().getMessage().getNoPermissionMessage());
             return true;
         }
 

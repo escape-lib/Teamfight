@@ -11,17 +11,18 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <repositories>
         <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
+            <id>ashcon-snapshots</id>
+            <url>https://repo.ashcon.app/nexus/content/repositories/snapshots/</url>
         </repository>
 
         <repository>
-            <id>ashcon-snapshots</id>
-            <url>https://repo.ashcon.app/nexus/content/repositories/snapshots/</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 

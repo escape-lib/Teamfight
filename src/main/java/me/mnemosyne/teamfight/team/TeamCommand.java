@@ -16,7 +16,7 @@ public class TeamCommand implements CommandExecutor {
         Player player = (Player) sender;
 
         if(args.length == 0){
-            player.sendMessage(TeamfightPlugin.getInstance().getTeamUsageMessage());
+            player.sendMessage(TeamfightPlugin.getInstance().getMessage().getTeamUsageMessage());
 
             return true;
         }
@@ -55,7 +55,7 @@ public class TeamCommand implements CommandExecutor {
                 break;
 
             default:
-                player.sendMessage(TeamfightPlugin.getInstance().getTeamUsageMessage());
+                player.sendMessage(TeamfightPlugin.getInstance().getMessage().getTeamUsageMessage());
                 break;
         }
 
