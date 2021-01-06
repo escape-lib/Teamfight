@@ -67,6 +67,10 @@ public class TeamSubcommandHandler {
             if(itFlag.equals(PLAYER_CHECK_FLAGS.EXECUTOR_IS_LEADER) && !userTeam.isLeader(player.getUniqueId())){
                 player.sendMessage(TeamfightPlugin.getInstance().getNotLeaderMessage());
                 return true;
+
+            } else if (itFlag.equals(PLAYER_CHECK_FLAGS._EXECUTOR_IS_LEADER) && userTeam.isLeader(player.getUniqueId())){
+                player.sendMessage(TeamfightPlugin.getInstance().getCannotDoThisAsLeaderMessage());
+                return true;
             }
 
 
@@ -299,6 +303,7 @@ public class TeamSubcommandHandler {
                 2)) { return; }
 
         UUID targetPlayerUUID = TeamfightPlugin.getInstance().getPlayerCache().getPlayerUUIDByName(args[1]);
+        String targetPlayerName = TeamfightPlugin.getInstance().getPlayerCache().getPlayerNameByUUID(targetPlayerUUID);
         Player targetPlayer = Bukkit.getPlayer(targetPlayerUUID);
 
         if(targetPlayerUUID == null){
@@ -312,10 +317,30 @@ public class TeamSubcommandHandler {
 
         userTeam.removePlayer(targetPlayerUUID);
 
+        String teamKickMessage = TeamfightPlugin.getInstance().getPlayerHasBeenKickedMessage().replace("%player_name%", targetPlayerName);
+        String localKickMessage = TeamfightPlugin.getInstance().getLocalPlayerHasBeenKickedMessage().replace("%team_name%", userTeam.getTeamName());
+
         if(targetPlayer != null){
-            player.sendMessage(TeamfightPlugin.getInstance().getLocalPlayerHasBeenKickedMessage());
+            player.sendMessage(localKickMessage);
         }
-        userTeam.sendMessageToTeam(TeamfightPlugin.getInstance().getPlayerHasBeenKickedMessage());
+        userTeam.sendMessageToTeam(teamKickMessage);
+
+        TeamfightPlugin.getInstance().getTeamManager().updateTeam(userTeam);
+    }
+
+    public void leaveTeam(){
+        if(checkPlayer(Arrays.asList(
+                PLAYER_CHECK_FLAGS.EXECUTOR_IN_TEAM, PLAYER_CHECK_FLAGS.EXECUTOR_IN_SPAWN, PLAYER_CHECK_FLAGS._EXECUTOR_IS_LEADER),
+
+                ChatColourUtil.convert(""),
+                1)) { return; }
+
+        userTeam.removePlayer(player.getUniqueId());
+
+        String teamLeaveMessage = TeamfightPlugin.getInstance().getTeamPlayerHasLeftMessage().replace("%player_name", player.getName());
+
+        player.sendMessage(TeamfightPlugin.getInstance().getLocalPlayerHasLeftMessage());
+        userTeam.sendMessageToTeam(teamLeaveMessage);
 
         TeamfightPlugin.getInstance().getTeamManager().updateTeam(userTeam);
     }

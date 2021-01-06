@@ -48,6 +48,11 @@ public class TeamfightPlugin extends JavaPlugin {
     @Getter private String playerHasBeenKickedMessage;
     @Getter private String localPlayerHasBeenKickedMessage;
 
+    @Getter private String teamPlayerHasLeftMessage;
+    @Getter private String localPlayerHasLeftMessage;
+    @Getter private String cannotDoThisAsLeaderMessage;
+
+
     @Getter private JedisPool jedisPool;
     @Getter private TeamManager teamManager;
     @Getter private ScoreboardManager scoreboardManager;
@@ -72,6 +77,7 @@ public class TeamfightPlugin extends JavaPlugin {
                         "&f/t invite &7<player>\n" +
                         "&f/t uninvite &7<player>\n" +
                         "&f/t kick &7<player>\n" +
+                        "&f/t leave\n" +
                         "&f/t disband\n"
                         + chatSpacer);
 
@@ -95,6 +101,10 @@ public class TeamfightPlugin extends JavaPlugin {
         playerHasJoinedTeamMessage = ChatColourUtil.convert("&7%player_name% &fhas joined the team!");
         playerHasBeenKickedMessage = ChatColourUtil.convert("&7%player_name% &fhas been kicked from the team!");
         localPlayerHasBeenKickedMessage = ChatColourUtil.convert("&fYou have been kicked from the team &7%team_name%");
+
+        cannotDoThisAsLeaderMessage = ChatColourUtil.convert("&cYou cannot do this while you are leader!");
+        localPlayerHasLeftMessage = ChatColourUtil.convert("&fYou have left the team");
+        teamPlayerHasLeftMessage = ChatColourUtil.convert("&7%player_name% &fhas left the team");
 
 
         teamManager = new TeamManager();
