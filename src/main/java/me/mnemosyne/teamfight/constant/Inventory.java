@@ -1,22 +1,20 @@
 package me.mnemosyne.teamfight.constant;
 
-import lombok.Getter;
 import me.mnemosyne.teamfight.util.ChatColourUtil;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Inventory {
     private ItemStack createInventoryItem(Material itemMaterial, String itemName, String... itemLore){
         ItemStack itemStack = new ItemStack(itemMaterial, 1);
         ItemMeta itemMeta = itemStack.getItemMeta();
-        ArrayList<String> loreArray = new ArrayList<>(Arrays.asList(itemLore));
+        ArrayList<String> loreArray = new ArrayList<>();
 
-        for(String s : loreArray){
-            s = ChatColourUtil.convert(s);
+        for(String s : itemLore){
+            loreArray.add(ChatColourUtil.convert(s));
         }
 
         itemMeta.setDisplayName(ChatColourUtil.convert(itemName));
@@ -28,11 +26,9 @@ public class Inventory {
     }
 
     public ItemStack getHitPotionCounter(int hits, double potionAccuracy){
-        String hitsStr = "&fHits: &7" + Integer.toString(hits);
-        String potionAccuracyStr = "&fPotion Accuracy: &7" + Double.toString(potionAccuracy * 100) + "%";
+        String hitsStr = "&fHits: &7" + hits;
+        String potionAccuracyStr = "&fPotion Accuracy: &7" + potionAccuracy * 100 + "%";
 
-        ItemStack item = createInventoryItem(Material.PAPER, "&6&lStatistics", "", hitsStr, potionAccuracyStr);
-
-        return item;
+        return createInventoryItem(Material.PAPER, "&6&lStatistics", "", hitsStr, potionAccuracyStr);
     }
 }
