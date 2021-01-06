@@ -6,9 +6,7 @@ import me.mnemosyne.teamfight.util.ChatColourUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UUID;
+import java.util.*;
 
 public class TeamSubcommandHandler {
     private Player player;
@@ -25,6 +23,65 @@ public class TeamSubcommandHandler {
 
     }
 
+    /*
+    * logic
+    *
+    * no _ prefix : the player should be this flag (eg. IN_TEAM),
+    * the player should be in a team. if they werent, it would send
+    * them a message saying something along the lines of : "You are not in a team!"
+    * returns: true
+    *
+    * _ prefix : the player should not be this flag (eg. " "),
+    * the player should not be in a team. " " : "You cannot do this while you are in a team!"
+    * returns: true
+    *
+     */
+    private enum PLAYER_CHECK_FLAGS{
+        EXECUTOR_IN_TEAM,
+        _EXECUTOR_IN_TEAM,
+
+        EXECUTOR_IS_LEADER,
+        _EXECUTOR_IS_LEADER,
+
+        EXECUTOR_IN_SPAWN,
+        _EXECUTOR_IN_SPAWN
+    }
+
+    private boolean checkPlayer(Collection<PLAYER_CHECK_FLAGS>flags, String usage, int requiredArgsCount) {
+        if (args.length < requiredArgsCount) {
+            player.sendMessage(usage);
+            return true;
+        }
+
+        for (PLAYER_CHECK_FLAGS itFlag : flags) {
+            if (itFlag.equals(PLAYER_CHECK_FLAGS.EXECUTOR_IN_TEAM) && userTeam == null) {
+                player.sendMessage(TeamfightPlugin.getInstance().getNotInTeamMessage());
+                return true;
+
+            } else if (itFlag.equals(PLAYER_CHECK_FLAGS._EXECUTOR_IN_TEAM) && userTeam != null) {
+                player.sendMessage(TeamfightPlugin.getInstance().getAlreadyInTeamMessage());
+                return true;
+            }
+
+
+            if(itFlag.equals(PLAYER_CHECK_FLAGS.EXECUTOR_IS_LEADER) && !userTeam.isLeader(player.getUniqueId())){
+                player.sendMessage(TeamfightPlugin.getInstance().getNotLeaderMessage());
+                return true;
+            }
+
+
+            if(itFlag.equals(PLAYER_CHECK_FLAGS.EXECUTOR_IN_SPAWN) && !user.isInSpawn()){
+                player.sendMessage(TeamfightPlugin.getInstance().getInFightMessage());
+                return true;
+            }
+
+
+
+        }
+
+        return false;
+    }
+
     private boolean isAlphaNumeric(String in) {
         return in != null && in.matches("^[a-zA-Z0-9]*$");
     }
@@ -32,12 +89,12 @@ public class TeamSubcommandHandler {
     private String showTeam(Team team){
         String build = ChatColourUtil.convert(
                 "\n\n" + TeamfightPlugin.getInstance().getChatSpacer() + "\n&7Team: &6" + team.getTeamName() + " &7[&a" + team.getPlayerCount() + " Online&7]\n" +
-                        "&fLeader: &a" + team.getLeader().getName() + "\n");
+                        "&fLeader: &a" + team.getTeamLeaderName() + "\n");
 
 
         String captainsString = "&fCaptains: &a";
-        for(UUID uuid : team.getCaptainList()){
-            captainsString += Bukkit.getPlayer(uuid).getName() + "&7,&a";
+        for(String name : team.getCaptainNameList()){
+            captainsString += name + "&7,&a";
         }
         if(captainsString.endsWith(",")){
             captainsString = captainsString.substring(0, captainsString.length() - 1);
@@ -47,8 +104,8 @@ public class TeamSubcommandHandler {
 
 
         String membersString = "&fMembers: &a";
-        for(UUID uuid : team.getMemberList()){
-            membersString += Bukkit.getPlayer(uuid).getName() + "&7,&a";
+        for(String name : team.getMemberNameList()){
+            membersString += name + "&7,&a";
         }
         if(membersString.endsWith(",")){
             membersString = membersString.substring(0, membersString.length() - 1);
@@ -66,26 +123,18 @@ public class TeamSubcommandHandler {
         return build;
     }
 
-    /*gotta clean up these beginchecks in the future*/
-
     public void createTeam(){
-        if(args.length == 1) {
-            player.sendMessage(ChatColourUtil.convert("&f/t create &7<teamName>"));
-            return;
+        if(checkPlayer(Arrays.asList(
+                PLAYER_CHECK_FLAGS._EXECUTOR_IN_TEAM, PLAYER_CHECK_FLAGS.EXECUTOR_IN_SPAWN),
 
-        } else if(!isAlphaNumeric(args[1])
+                ChatColourUtil.convert("&f/t create &7<teamName>"),
+                2)) { return; }
+
+        if(!isAlphaNumeric(args[1])
                 || args[1].length() > 16
                 || args[1].length() < 3) {
 
             player.sendMessage(TeamfightPlugin.getInstance().getSuitableNameMessage());
-            return;
-
-        } else if(userTeam != null){
-            player.sendMessage(TeamfightPlugin.getInstance().getAlreadyInTeamMessage());
-            return;
-
-        } else if (!user.isInSpawn()){
-            player.sendMessage(TeamfightPlugin.getInstance().getInFightMessage());
             return;
 
         } else if (TeamfightPlugin.getInstance().getTeamManager().teamExists(args[1])){
@@ -105,18 +154,11 @@ public class TeamSubcommandHandler {
     }
 
     public void disbandTeam(){
-        if(userTeam == null){
-            player.sendMessage(TeamfightPlugin.getInstance().getNotInTeamMessage());
-            return;
+        if(checkPlayer(Arrays.asList(
+                PLAYER_CHECK_FLAGS.EXECUTOR_IN_TEAM, PLAYER_CHECK_FLAGS.EXECUTOR_IN_SPAWN, PLAYER_CHECK_FLAGS.EXECUTOR_IS_LEADER),
 
-        } else if (!user.isInSpawn() || userTeam.isFightInProgress()){
-            player.sendMessage(TeamfightPlugin.getInstance().getInFightMessage());
-            return;
-
-        } else if (!userTeam.isLeader(player)){
-            player.sendMessage(TeamfightPlugin.getInstance().getNotLeaderMessage());
-            return;
-        }
+                "",
+                1)) { return; }
 
         TeamfightPlugin.getInstance().getTeamManager().removeTeam(userTeam);
 
@@ -149,22 +191,11 @@ public class TeamSubcommandHandler {
     }
 
     public void invitePlayer(){
-        if(args.length == 1) {
-            player.sendMessage(ChatColourUtil.convert("&f/t invite &7<player>"));
-            return;
+        if(checkPlayer(Arrays.asList(
+                PLAYER_CHECK_FLAGS.EXECUTOR_IN_TEAM, PLAYER_CHECK_FLAGS.EXECUTOR_IN_SPAWN, PLAYER_CHECK_FLAGS.EXECUTOR_IS_LEADER),
 
-        } else if(userTeam == null){
-            player.sendMessage(TeamfightPlugin.getInstance().getNotInTeamMessage());
-            return;
-
-        } else if (!userTeam.isLeader(player)){
-            player.sendMessage(TeamfightPlugin.getInstance().getNotLeaderMessage());
-            return;
-
-        } else if (!user.isInSpawn()){
-            player.sendMessage(TeamfightPlugin.getInstance().getInFightMessage());
-            return;
-        }
+                ChatColourUtil.convert("&f/t invite &7<player>"),
+                2)) { return; }
 
         Player targetPlayer = Bukkit.getPlayer(args[1]);
         if(targetPlayer == null){
@@ -172,7 +203,7 @@ public class TeamSubcommandHandler {
             return;
         }
 
-        if(userTeam.getUUIDList().contains(targetPlayer.getUniqueId())){
+        if(userTeam.getTotalUUIDList().contains(targetPlayer.getUniqueId())){
             player.sendMessage(TeamfightPlugin.getInstance().getPlayerIsInTeamMessage());
             return;
 
@@ -202,22 +233,11 @@ public class TeamSubcommandHandler {
     }
 
     public void unInvitePlayer(){
-        if(args.length == 1){
-            player.sendMessage(ChatColourUtil.convert("&f/t uninvite &7<player>"));
-            return;
+        if(checkPlayer(Arrays.asList(
+                PLAYER_CHECK_FLAGS.EXECUTOR_IN_TEAM, PLAYER_CHECK_FLAGS.EXECUTOR_IN_SPAWN, PLAYER_CHECK_FLAGS.EXECUTOR_IS_LEADER),
 
-        } else if(userTeam == null){
-            player.sendMessage(TeamfightPlugin.getInstance().getNotInTeamMessage());
-            return;
-
-        } else if (!userTeam.isLeader(player)){
-            player.sendMessage(TeamfightPlugin.getInstance().getNotLeaderMessage());
-            return;
-
-        } else if (!user.isInSpawn()){
-            player.sendMessage(TeamfightPlugin.getInstance().getInFightMessage());
-            return;
-        }
+                ChatColourUtil.convert("&f/t uninvite &7<player>"),
+                2)) { return; }
 
         Player targetPlayer = Bukkit.getPlayer(args[1]);
         if(targetPlayer == null){
@@ -225,7 +245,7 @@ public class TeamSubcommandHandler {
             return;
         }
 
-        if(userTeam.getUUIDList().contains(targetPlayer.getUniqueId())){
+        if(userTeam.isInTeam(targetPlayer.getName())){
             player.sendMessage(TeamfightPlugin.getInstance().getPlayerUninviteIsInTeamMessage());
             return;
 
@@ -254,15 +274,13 @@ public class TeamSubcommandHandler {
     }
 
     public void joinTeam(){
-        if(args.length == 1){
-            player.sendMessage(ChatColourUtil.convert("&f/t join &7<teamName>"));
-            return;
+        if(checkPlayer(Arrays.asList(
+                PLAYER_CHECK_FLAGS._EXECUTOR_IN_TEAM, PLAYER_CHECK_FLAGS.EXECUTOR_IN_SPAWN),
 
-        } else if(userTeam != null){
-            player.sendMessage(TeamfightPlugin.getInstance().getAlreadyInTeamMessage());
-            return;
+                ChatColourUtil.convert("&f/t join &7<teamName>"),
+                2)) { return; }
 
-        } else if (!TeamfightPlugin.getInstance().getTeamManager().teamExists(args[1])){
+        if (!TeamfightPlugin.getInstance().getTeamManager().teamExists(args[1])){
             player.sendMessage(TeamfightPlugin.getInstance().getNoTeamFoundMessage().replace("%udefined%", args[1]));
             return;
         }
@@ -276,8 +294,7 @@ public class TeamSubcommandHandler {
         }
 
         pendingInvites.remove(player.getUniqueId());
-        Collection<UUID> memberList = teamToBeJoined.getMemberList();
-        memberList.add(player.getUniqueId());
+        teamToBeJoined.addPlayerToTeam(player);
 
         teamToBeJoined.sendMessageToTeam(TeamfightPlugin.getInstance().getPlayerHasJoinedTeamMessage().replace("%player_name%", player.getName()));
 
@@ -285,35 +302,23 @@ public class TeamSubcommandHandler {
     }
 
     public void kickPlayer(){
-        if(args.length == 1) {
-            player.sendMessage(ChatColourUtil.convert("&f/t invite &7<player>"));
-            return;
+        if(checkPlayer(Arrays.asList(
+                PLAYER_CHECK_FLAGS.EXECUTOR_IN_TEAM, PLAYER_CHECK_FLAGS.EXECUTOR_IN_SPAWN, PLAYER_CHECK_FLAGS.EXECUTOR_IS_LEADER),
 
-        } else if(userTeam == null){
-            player.sendMessage(TeamfightPlugin.getInstance().getNotInTeamMessage());
-            return;
-
-        } else if (!userTeam.isLeader(player)){
-            player.sendMessage(TeamfightPlugin.getInstance().getNotLeaderMessage());
-            return;
-
-        } else if (!user.isInSpawn()){
-            player.sendMessage(TeamfightPlugin.getInstance().getInFightMessage());
-            return;
-        }
+                ChatColourUtil.convert("&f/t kick &7<player>"),
+                2)) { return; }
 
         Player targetPlayer = Bukkit.getPlayer(args[1]);
         if(targetPlayer == null){
             player.sendMessage(TeamfightPlugin.getInstance().getOfflinePlayerMessage());
             return;
 
-        } else if(userTeam.getUUIDList().contains(targetPlayer.getUniqueId())) {
+        } else if(userTeam.getTotalUUIDList().contains(targetPlayer.getUniqueId())) {
             player.sendMessage(TeamfightPlugin.getInstance().getPlayerIsInTeamMessage());
             return;
-
         }
 
-        Collection<UUID>UUIDList = userTeam.getUUIDList();
+        Collection<UUID>UUIDList = userTeam.getTotalUUIDList();
         UUIDList.remove(player.getUniqueId());
 
         player.sendMessage(TeamfightPlugin.getInstance().getLocalPlayerHasBeenKickedMessage());

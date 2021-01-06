@@ -2,31 +2,38 @@ package me.mnemosyne.teamfight.team;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.mnemosyne.teamfight.util.GeneralUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class Team {
     @Getter @Setter private String teamName;
     @Getter @Setter private UUID teamUUID;
+
     @Getter @Setter private UUID teamLeaderUUID;
-    @Getter @Setter private Collection<UUID>captainList;
-    @Getter @Setter private Collection<UUID>memberList;
+    @Getter @Setter private String teamLeaderNameCache;
+
+    @Getter @Setter private HashMap<UUID, String>captainList;
+    @Getter @Setter private HashMap<UUID, String>memberList;
+
     @Getter @Setter private Collection<UUID>pendingInviteRequests;
     @Getter @Setter private boolean isFightInProgress;
     @Getter @Setter private int wins;
     @Getter @Setter private int losses;
 
-    public Team(Player teamLeader) {
-        memberList = new ArrayList<>();
-        captainList = new ArrayList<>();
+    public Team(Player teamLeaderPlayer) {
+        memberList = new HashMap<>();
+        captainList = new HashMap<>();
         pendingInviteRequests = new ArrayList<>();
 
         this.teamUUID = UUID.randomUUID();
-        this.teamLeaderUUID = teamLeader.getUniqueId();
+        this.teamLeaderUUID = teamLeaderPlayer.getUniqueId();
+        this.teamLeaderNameCache = teamLeaderPlayer.getName();
 
         this.isFightInProgress = false;
 
@@ -38,39 +45,105 @@ public class Team {
         return 1 + captainList.size() + memberList.size();
     }
 
-    public Collection<Player>getPlayerList(){
+    public Collection<Player>getOnlinePlayerList(){
         Collection<Player>playerList = new ArrayList<>();
 
-        playerList.add(Bukkit.getPlayer(teamLeaderUUID));
+        Player teamLeaderPlayer = Bukkit.getPlayer(teamLeaderUUID);
+        if(teamLeaderPlayer != null) { playerList.add(teamLeaderPlayer); }
 
-        for(UUID uuid : captainList) { playerList.add(Bukkit.getPlayer(uuid)); }
-        for(UUID uuid : memberList) { playerList.add(Bukkit.getPlayer(uuid)); }
+        for(UUID uuid : captainList.keySet()) {
+            Player player = Bukkit.getPlayer(uuid);
+            if(player != null){ playerList.add(player); }
+        }
+        for(UUID uuid : memberList.keySet()) {
+            Player player = Bukkit.getPlayer(uuid);
+            if(player != null){ playerList.add(player); }
+        }
 
         return playerList;
     }
 
-    public Collection<UUID>getUUIDList(){
+    public Collection<UUID>getTotalUUIDList(){
         Collection<UUID>UUIDList = new ArrayList<>();
 
         UUIDList.add(teamLeaderUUID);
 
-        for(UUID uuid : captainList){ UUIDList.add(uuid); }
-        for(UUID uuid : memberList){ UUIDList.add(uuid); }
+        UUIDList.addAll(captainList.keySet());
+        UUIDList.addAll(memberList.keySet());
 
         return UUIDList;
     }
 
-    public Player getLeader(){
-        return Bukkit.getPlayer(this.teamLeaderUUID);
+    public UUID getLeaderUUID(){
+        return this.teamLeaderUUID;
     }
 
-    public boolean isLeader(Player player){
-        return player.getUniqueId().equals(teamLeaderUUID);
+    public boolean isLeader(UUID uuid){
+        return uuid.equals(teamLeaderUUID);
+    }
+
+    public boolean isCaptain(UUID uuid){
+        return captainList.containsKey(uuid);
+    }
+
+    public boolean isMember(UUID uuid){
+        return memberList.containsKey(uuid);
+    }
+
+    public void addPlayerToTeam(Player player){
+        this.memberList.put(player.getUniqueId(), player.getName());
+    }
+
+    public void promotePlayerToCaptain(String playerName){
+        UUID playerUUID = GeneralUtil.getKeyByValue(memberList, playerName);
+
+        if(memberList.containsKey(playerUUID)){
+            memberList.remove(playerUUID);
+            captainList.put(playerUUID, playerName);
+        }
+    }
+
+    public boolean isInTeam(String playerName){
+        for(String name : getEntireTeamPlayerListByName()){
+            if(name.equalsIgnoreCase(playerName)) { return true; }
+        }
+
+        return false;
     }
 
     public void sendMessageToTeam(String message){
-        for(Player player : getPlayerList()){
+        for(Player player : getOnlinePlayerList()){
             player.sendMessage(message);
         }
+    }
+
+    public String getTeamLeaderName(){
+        return this.teamLeaderNameCache;
+    }
+
+    public Collection<String>getCaptainNameList(){
+        Collection<String>list = new ArrayList<>();
+
+        list.addAll(captainList.values());
+
+        return list;
+    }
+
+    public Collection<String>getMemberNameList() {
+        Collection<String>list = new ArrayList<>();
+
+        list.addAll(memberList.values());
+
+        return list;
+    }
+
+    public Collection<String>getEntireTeamPlayerListByName(){
+        Collection<String>list = new ArrayList<>();
+
+        list.add(this.getTeamLeaderName());
+        list.addAll(this.getCaptainNameList());
+        list.addAll(this.getMemberNameList());
+
+        return list;
     }
 }

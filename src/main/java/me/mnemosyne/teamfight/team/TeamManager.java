@@ -16,7 +16,7 @@ public class TeamManager {
         UUID playerUUID = player.getUniqueId();
 
         for(Team team : teamList){
-            if(team.getUUIDList().contains(playerUUID)){
+            if(team.getTotalUUIDList().contains(playerUUID)){
                 return team;
             }
         }
@@ -85,7 +85,7 @@ public class TeamManager {
                 teams.add(itTeam);
             }
             if (potentialPlayer != null
-                    && itTeam.getUUIDList().contains(potentialPlayer.getUniqueId())){
+                    && itTeam.getTotalUUIDList().contains(potentialPlayer.getUniqueId())){
 
                 teams.add(itTeam);
             }

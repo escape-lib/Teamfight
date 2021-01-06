@@ -29,7 +29,7 @@ public class TeamPrefixChatListener implements Listener {
 
         Collection<? extends Player>playersNotInChatterTeam = new ArrayList<>(Bukkit.getOnlinePlayers());
 
-        playersNotInChatterTeam.removeAll(team.getPlayerList());
+        playersNotInChatterTeam.removeAll(team.getOnlinePlayerList());
 
         for(Player itPlayer : playersNotInChatterTeam){
             itPlayer.sendMessage(ChatColourUtil.convert("&7[&6" + team.getTeamName() + "&7]&f" + player.getDisplayName() + "&7: &f" + event.getMessage()));
