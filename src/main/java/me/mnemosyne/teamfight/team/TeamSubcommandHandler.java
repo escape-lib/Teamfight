@@ -87,13 +87,18 @@ public class TeamSubcommandHandler {
     }
 
     private String showTeam(Team team){
+        String teamLeaderName = team.getTeamLeaderName();
+        Collection<String> captainsNames = team.getCaptainsNames();
+        Collection<String> membersNames = team.getMembersNames();
+
+
         String build = ChatColourUtil.convert(
                 "\n\n" + TeamfightPlugin.getInstance().getChatSpacer() + "\n&7Team: &6" + team.getTeamName() + " &7[&a" + team.getPlayerCount() + " Online&7]\n" +
-                        "&fLeader: &a" + team.getTeamLeaderName() + "\n");
+                        "&fLeader: &a" + teamLeaderName + "\n");
 
 
         String captainsString = "&fCaptains: &a";
-        for(String name : team.getCaptainNameList()){
+        for(String name : captainsNames){
             captainsString += name + "&7,&a";
         }
         if(captainsString.endsWith(",")){
@@ -104,7 +109,7 @@ public class TeamSubcommandHandler {
 
 
         String membersString = "&fMembers: &a";
-        for(String name : team.getMemberNameList()){
+        for(String name : membersNames){
             membersString += name + "&7,&a";
         }
         if(membersString.endsWith(",")){
@@ -142,11 +147,8 @@ public class TeamSubcommandHandler {
             return;
         }
 
-        Team team = new Team(player);
-        team.setTeamName(args[1]);
+        Team team = new Team(player, args[1]);
         TeamfightPlugin.getInstance().getTeamManager().addTeam(team);
-
-        //player.sendMessage(ChatColourUtil.convert("&aSuccessfully created team &7" + team.getTeamName()));
 
         for(Player itPlayer : Bukkit.getOnlinePlayers()){
             itPlayer.sendMessage(ChatColourUtil.convert("&fTeam &6" + team.getTeamName() + " &fhas been created by &7" + player.getName()));
@@ -167,6 +169,7 @@ public class TeamSubcommandHandler {
         }
     }
 
+    /*exception to flags as player can t show without having 2nd arg*/
     public void showTeam(){
         if(args.length == 1 && userTeam == null){
             player.sendMessage(ChatColourUtil.convert("&f/t show &7<teamName|playerName>"));
@@ -203,7 +206,7 @@ public class TeamSubcommandHandler {
             return;
         }
 
-        if(userTeam.getTotalUUIDList().contains(targetPlayer.getUniqueId())){
+        if(userTeam.isInTeam(targetPlayer.getUniqueId())){
             player.sendMessage(TeamfightPlugin.getInstance().getPlayerIsInTeamMessage());
             return;
 
@@ -239,34 +242,21 @@ public class TeamSubcommandHandler {
                 ChatColourUtil.convert("&f/t uninvite &7<player>"),
                 2)) { return; }
 
-        Player targetPlayer = Bukkit.getPlayer(args[1]);
-        if(targetPlayer == null){
-            player.sendMessage(TeamfightPlugin.getInstance().getOfflinePlayerMessage());
-            return;
-        }
+        UUID targetPlayerUUID = TeamfightPlugin.getInstance().getPlayerCache().getPlayerUUIDByName(args[1]);
 
-        if(userTeam.isInTeam(targetPlayer.getName())){
+        if(userTeam.isInTeam(targetPlayerUUID)){
             player.sendMessage(TeamfightPlugin.getInstance().getPlayerUninviteIsInTeamMessage());
             return;
 
-        } else if (!userTeam.getPendingInviteRequests().contains(targetPlayer.getUniqueId())){
+        } else if (!userTeam.getPendingInviteRequests().contains(targetPlayerUUID)){
             player.sendMessage(TeamfightPlugin.getInstance().getDoesNotHaveInviteMessage());
             return;
         }
 
-        String uninviteMessage = TeamfightPlugin.getInstance().getUninviteMessage();
-        String uninviteTeamMessage = TeamfightPlugin.getInstance().getUninvitingTeamMessage();
-
-        uninviteMessage = uninviteMessage.replace("%team_name%", userTeam.getTeamName());
-
-        uninviteTeamMessage = uninviteTeamMessage.replace("%inviting_player%", player.getName());
-        uninviteTeamMessage = uninviteTeamMessage.replace("%invited_player%", targetPlayer.getName());
-
-        targetPlayer.sendMessage(uninviteMessage);
-        userTeam.sendMessageToTeam(uninviteTeamMessage);
+        player.sendMessage(TeamfightPlugin.getInstance().getUninviteMessage());
 
         Collection<UUID>pendingInvites = new ArrayList<>(userTeam.getPendingInviteRequests());
-        pendingInvites.remove(targetPlayer.getUniqueId());
+        pendingInvites.remove(targetPlayerUUID);
 
         userTeam.setPendingInviteRequests(pendingInvites);
 
@@ -294,7 +284,7 @@ public class TeamSubcommandHandler {
         }
 
         pendingInvites.remove(player.getUniqueId());
-        teamToBeJoined.addPlayerToTeam(player);
+        teamToBeJoined.addPlayer(player);
 
         teamToBeJoined.sendMessageToTeam(TeamfightPlugin.getInstance().getPlayerHasJoinedTeamMessage().replace("%player_name%", player.getName()));
 
@@ -308,20 +298,23 @@ public class TeamSubcommandHandler {
                 ChatColourUtil.convert("&f/t kick &7<player>"),
                 2)) { return; }
 
-        Player targetPlayer = Bukkit.getPlayer(args[1]);
-        if(targetPlayer == null){
+        UUID targetPlayerUUID = TeamfightPlugin.getInstance().getPlayerCache().getPlayerUUIDByName(args[1]);
+        Player targetPlayer = Bukkit.getPlayer(targetPlayerUUID);
+
+        if(targetPlayerUUID == null){
             player.sendMessage(TeamfightPlugin.getInstance().getOfflinePlayerMessage());
             return;
 
-        } else if(userTeam.getTotalUUIDList().contains(targetPlayer.getUniqueId())) {
+        } else if(userTeam.isInTeam(targetPlayerUUID)) {
             player.sendMessage(TeamfightPlugin.getInstance().getPlayerIsInTeamMessage());
             return;
         }
 
-        Collection<UUID>UUIDList = userTeam.getTotalUUIDList();
-        UUIDList.remove(player.getUniqueId());
+        userTeam.removePlayer(targetPlayerUUID);
 
-        player.sendMessage(TeamfightPlugin.getInstance().getLocalPlayerHasBeenKickedMessage());
+        if(targetPlayer != null){
+            player.sendMessage(TeamfightPlugin.getInstance().getLocalPlayerHasBeenKickedMessage());
+        }
         userTeam.sendMessageToTeam(TeamfightPlugin.getInstance().getPlayerHasBeenKickedMessage());
 
         TeamfightPlugin.getInstance().getTeamManager().updateTeam(userTeam);

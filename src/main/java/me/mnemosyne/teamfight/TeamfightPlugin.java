@@ -1,6 +1,8 @@
 package me.mnemosyne.teamfight;
 
 import lombok.Getter;
+import me.mnemosyne.teamfight.cache.PlayerCache;
+import me.mnemosyne.teamfight.cache.listener.JoinCacheListener;
 import me.mnemosyne.teamfight.command.BuildCommand;
 import me.mnemosyne.teamfight.configmanager.ConfigLoad;
 import me.mnemosyne.teamfight.configmanager.ConfigStore;
@@ -38,7 +40,6 @@ public class TeamfightPlugin extends JavaPlugin {
     @Getter private String playerUninviteIsInTeamMessage;
     @Getter private String teamExistsMessage;
     @Getter private String isInvitingToTeamMessage;
-    @Getter private String uninvitingTeamMessage;
     @Getter private String uninviteMessage;
     @Getter private String alreadyInvitedPlayerMessage;
     @Getter private String doesNotHaveInviteMessage;
@@ -54,6 +55,7 @@ public class TeamfightPlugin extends JavaPlugin {
     @Getter private org.bukkit.scoreboard.Team spawnTeam;
     @Getter private GeneralUtil generalUtil;
     @Getter private NametagHandler nametagHandler;
+    @Getter private PlayerCache playerCache;
 
     @Override
     public void onEnable(){
@@ -86,8 +88,7 @@ public class TeamfightPlugin extends JavaPlugin {
         playerUninviteIsInTeamMessage = ChatColourUtil.convert("&cYou cannot uninvite players that are in your team!");
         teamExistsMessage = ChatColourUtil.convert("&cTeam with name %team_name% already exists!");
         isInvitingToTeamMessage = ChatColourUtil.convert("&7%inviting_player% &fhas invited &7%invited_player% &fto join the team");
-        uninvitingTeamMessage = ChatColourUtil.convert("&7%inviting_player% &fhas uninvited &7%invited_player%");
-        uninviteMessage = ChatColourUtil.convert("&fYou have been uninvited from joining the team &7%team_name%");
+        uninviteMessage = ChatColourUtil.convert("&fYou have successfully uninvited this player.");
         alreadyInvitedPlayerMessage = ChatColourUtil.convert("&cThis player has already been invited to the team!");
         doesNotHaveInviteMessage = ChatColourUtil.convert("&cThis player does not have an invite to the team!");
         localDoesNotHaveInviteMessage = ChatColourUtil.convert("&cYou do not have an invite to this team!");
@@ -102,6 +103,7 @@ public class TeamfightPlugin extends JavaPlugin {
         scoreboardManager = new ScoreboardManager();
         spawnScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         jedisPool = new JedisPool(ConfigStore.getRedisHost(), ConfigStore.getRedisPort());
+        playerCache = new PlayerCache();
 
         new ConfigLoad().load();
 
@@ -135,7 +137,7 @@ public class TeamfightPlugin extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new ScoreboardTeamJoinLeaveListener(), this);
         this.getServer().getPluginManager().registerEvents(new DebugChatListener(), this);
         this.getServer().getPluginManager().registerEvents(new TeamPrefixChatListener(), this);
-
+        this.getServer().getPluginManager().registerEvents(new JoinCacheListener(), this);
     }
 
     private void setupCommands(){

@@ -2,13 +2,12 @@ package me.mnemosyne.teamfight.team;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.mnemosyne.teamfight.util.GeneralUtil;
+import me.mnemosyne.teamfight.TeamfightPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.UUID;
 
 public class Team {
@@ -16,24 +15,22 @@ public class Team {
     @Getter @Setter private UUID teamUUID;
 
     @Getter @Setter private UUID teamLeaderUUID;
-    @Getter @Setter private String teamLeaderNameCache;
-
-    @Getter @Setter private HashMap<UUID, String>captainList;
-    @Getter @Setter private HashMap<UUID, String>memberList;
+    @Getter @Setter private Collection<UUID> captainsUUIDs;
+    @Getter @Setter private Collection<UUID> membersUUIDs;
 
     @Getter @Setter private Collection<UUID>pendingInviteRequests;
     @Getter @Setter private boolean isFightInProgress;
     @Getter @Setter private int wins;
     @Getter @Setter private int losses;
 
-    public Team(Player teamLeaderPlayer) {
-        memberList = new HashMap<>();
-        captainList = new HashMap<>();
+    public Team(Player teamLeaderPlayer, String teamName) {
+        membersUUIDs = new ArrayList<>();
+        captainsUUIDs = new ArrayList<>();
         pendingInviteRequests = new ArrayList<>();
 
         this.teamUUID = UUID.randomUUID();
         this.teamLeaderUUID = teamLeaderPlayer.getUniqueId();
-        this.teamLeaderNameCache = teamLeaderPlayer.getName();
+        this.teamName = teamName;
 
         this.isFightInProgress = false;
 
@@ -42,40 +39,36 @@ public class Team {
     }
 
     public int getPlayerCount(){
-        return 1 + captainList.size() + memberList.size();
+        return 1 + captainsUUIDs.size() + membersUUIDs.size();
     }
 
-    public Collection<Player>getOnlinePlayerList(){
-        Collection<Player>playerList = new ArrayList<>();
+    public Collection<Player>getOnlinePlayers(){
+        Collection<Player>players = new ArrayList<>();
 
         Player teamLeaderPlayer = Bukkit.getPlayer(teamLeaderUUID);
-        if(teamLeaderPlayer != null) { playerList.add(teamLeaderPlayer); }
+        if(teamLeaderPlayer != null) { players.add(teamLeaderPlayer); }
 
-        for(UUID uuid : captainList.keySet()) {
+        for(UUID uuid : captainsUUIDs) {
             Player player = Bukkit.getPlayer(uuid);
-            if(player != null){ playerList.add(player); }
+            if(player != null){ players.add(player); }
         }
-        for(UUID uuid : memberList.keySet()) {
+        for(UUID uuid : membersUUIDs) {
             Player player = Bukkit.getPlayer(uuid);
-            if(player != null){ playerList.add(player); }
+            if(player != null){ players.add(player); }
         }
 
-        return playerList;
+        return players;
     }
 
-    public Collection<UUID>getTotalUUIDList(){
+    public Collection<UUID>getUUIDs(){
         Collection<UUID>UUIDList = new ArrayList<>();
 
         UUIDList.add(teamLeaderUUID);
 
-        UUIDList.addAll(captainList.keySet());
-        UUIDList.addAll(memberList.keySet());
+        UUIDList.addAll(captainsUUIDs);
+        UUIDList.addAll(membersUUIDs);
 
         return UUIDList;
-    }
-
-    public UUID getLeaderUUID(){
-        return this.teamLeaderUUID;
     }
 
     public boolean isLeader(UUID uuid){
@@ -83,67 +76,58 @@ public class Team {
     }
 
     public boolean isCaptain(UUID uuid){
-        return captainList.containsKey(uuid);
+        return captainsUUIDs.contains(uuid);
     }
 
     public boolean isMember(UUID uuid){
-        return memberList.containsKey(uuid);
+        return membersUUIDs.contains(uuid);
     }
 
-    public void addPlayerToTeam(Player player){
-        this.memberList.put(player.getUniqueId(), player.getName());
+    public void addPlayer(Player player){
+        this.membersUUIDs.add(player.getUniqueId());
     }
 
-    public void promotePlayerToCaptain(String playerName){
-        UUID playerUUID = GeneralUtil.getKeyByValue(memberList, playerName);
+    public void removePlayer(UUID uuid){
+        captainsUUIDs.remove(uuid);
+        membersUUIDs.remove(uuid);
+    }
 
-        if(memberList.containsKey(playerUUID)){
-            memberList.remove(playerUUID);
-            captainList.put(playerUUID, playerName);
+    public void promotePlayerToCaptain(UUID uuid){
+        if(membersUUIDs.contains(uuid)){
+            membersUUIDs.remove(uuid);
+            captainsUUIDs.add(uuid);
         }
     }
 
-    public boolean isInTeam(String playerName){
-        for(String name : getEntireTeamPlayerListByName()){
-            if(name.equalsIgnoreCase(playerName)) { return true; }
-        }
-
-        return false;
+    public boolean isInTeam(UUID uuid){
+        return this.getUUIDs().contains(uuid);
     }
 
     public void sendMessageToTeam(String message){
-        for(Player player : getOnlinePlayerList()){
+        for(Player player : getOnlinePlayers()){
             player.sendMessage(message);
         }
     }
 
+    public Collection<String> getAllNames(){
+        Collection<String>names = new ArrayList<>();
+
+        names.add(TeamfightPlugin.getInstance().getPlayerCache().getPlayerNameByUUID(teamLeaderUUID));
+        names.addAll(TeamfightPlugin.getInstance().getPlayerCache().getPlayersNamesByUUIDs(captainsUUIDs));
+        names.addAll(TeamfightPlugin.getInstance().getPlayerCache().getPlayersNamesByUUIDs(membersUUIDs));
+
+        return names;
+    }
+
     public String getTeamLeaderName(){
-        return this.teamLeaderNameCache;
+        return TeamfightPlugin.getInstance().getPlayerCache().getPlayerNameByUUID(teamLeaderUUID);
     }
 
-    public Collection<String>getCaptainNameList(){
-        Collection<String>list = new ArrayList<>();
-
-        list.addAll(captainList.values());
-
-        return list;
+    public Collection<String> getCaptainsNames(){
+        return TeamfightPlugin.getInstance().getPlayerCache().getPlayersNamesByUUIDs(captainsUUIDs);
     }
 
-    public Collection<String>getMemberNameList() {
-        Collection<String>list = new ArrayList<>();
-
-        list.addAll(memberList.values());
-
-        return list;
-    }
-
-    public Collection<String>getEntireTeamPlayerListByName(){
-        Collection<String>list = new ArrayList<>();
-
-        list.add(this.getTeamLeaderName());
-        list.addAll(this.getCaptainNameList());
-        list.addAll(this.getMemberNameList());
-
-        return list;
+    public Collection<String> getMembersNames(){
+        return TeamfightPlugin.getInstance().getPlayerCache().getPlayersNamesByUUIDs(membersUUIDs);
     }
 }
