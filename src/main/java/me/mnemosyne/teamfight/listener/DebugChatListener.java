@@ -1,5 +1,6 @@
 package me.mnemosyne.teamfight.listener;
 
+import me.mnemosyne.teamfight.TeamfightPlugin;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,6 +15,7 @@ public class DebugChatListener implements Listener {
             return;
         }
 
-
+        player.openInventory(TeamfightPlugin.getInstance().getGameInventory().getFightInventory(null, null));
+        event.setCancelled(true);
     }
 }

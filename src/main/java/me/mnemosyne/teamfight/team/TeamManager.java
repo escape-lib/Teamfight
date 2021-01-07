@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -30,34 +31,30 @@ public class TeamManager {
 
     public void updateTeam(Team team){
         Collection<Team> removed = new ArrayList<>();
-        Collection<Team> added = new ArrayList<>();
 
         for(Team t : teamList) {
             if (t.getTeamUUID().equals(team.getTeamUUID())) {
                 removed.add(t);
-                added.add(team);
             }
         }
 
         teamList.removeAll(removed);
-        teamList.addAll(added);
+        teamList.add(team);
     }
 
     public void updateTeam(Team[] teams){
         Collection<Team> removed = new ArrayList<>();
-        Collection<Team> added = new ArrayList<>();
 
         for(Team team : teams){
             for(Team t : teamList){
                 if(t.getTeamUUID().equals(team.getTeamUUID())){
                     removed.add(t);
-                    added.add(team);
                 }
             }
         }
 
         teamList.removeAll(removed);
-        teamList.addAll(added);
+        teamList.addAll(Arrays.asList(teams));
     }
 
     public void addTeam(Team team){

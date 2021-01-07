@@ -5,6 +5,7 @@ import me.mnemosyne.teamfight.log.Log;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -26,34 +27,30 @@ public class UserManager {
 
     public void updateUser(User user){
         Collection<User> removed = new ArrayList<>();
-        Collection<User> added = new ArrayList<>();
 
         for(User u : userList) {
             if (u.getPlayerUUID().equals(user.getPlayerUUID())) {
                 removed.add(u);
-                added.add(user);
             }
         }
 
         userList.removeAll(removed);
-        userList.addAll(added);
+        userList.add(user);
     }
 
     public void updateUser(User[] users){
         Collection<User> removed = new ArrayList<>();
-        Collection<User> added = new ArrayList<>();
 
         for(User inUser : users){
             for(User u : userList){
                 if(u.getPlayerUUID().equals(inUser.getPlayerUUID())){
                     removed.add(u);
-                    added.add(inUser);
                 }
             }
         }
 
         userList.removeAll(removed);
-        userList.addAll(added);
+        userList.addAll(Arrays.asList(users));
     }
 
     public void removeUser(User user){

@@ -6,6 +6,7 @@ import me.mnemosyne.teamfight.cache.listener.JoinCacheListener;
 import me.mnemosyne.teamfight.command.BuildCommand;
 import me.mnemosyne.teamfight.configmanager.ConfigLoad;
 import me.mnemosyne.teamfight.configmanager.ConfigStore;
+import me.mnemosyne.teamfight.constant.GameInventory;
 import me.mnemosyne.teamfight.constant.Message;
 import me.mnemosyne.teamfight.listener.*;
 import me.mnemosyne.teamfight.nametag.NametagHandler;
@@ -35,6 +36,7 @@ public class TeamfightPlugin extends JavaPlugin {
     @Getter private NametagHandler nametagHandler;
     @Getter private PlayerCache playerCache;
     @Getter private Message message;
+    @Getter private GameInventory gameInventory;
 
     @Override
     public void onEnable(){
@@ -50,6 +52,7 @@ public class TeamfightPlugin extends JavaPlugin {
         jedisPool = new JedisPool(ConfigStore.getRedisHost(), ConfigStore.getRedisPort());
         playerCache = new PlayerCache();
         message = new Message();
+        gameInventory = new GameInventory();
 
         new ConfigLoad().load();
 
