@@ -36,7 +36,7 @@ public class TeamSubcommandHandler {
     * returns: true
     *
      */
-    private enum PLAYER_CHECK_FLAGS{
+    protected enum PLAYER_CHECK_FLAGS{
         EXECUTOR_IN_TEAM,
         _EXECUTOR_IN_TEAM,
 
