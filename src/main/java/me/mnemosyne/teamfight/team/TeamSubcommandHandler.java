@@ -74,7 +74,7 @@ public class TeamSubcommandHandler {
             }
 
 
-            if(itFlag.equals(PLAYER_CHECK_FLAGS.EXECUTOR_IN_SPAWN) && !user.isInSpawn()){
+            if(itFlag.equals(PLAYER_CHECK_FLAGS.EXECUTOR_IN_SPAWN) && !(user.getPlace() == TeamfightPlugin.PLAYER_PLACE_FLAG.PLAYER_SPAWN)){
                 player.sendMessage(TeamfightPlugin.getInstance().getMessage().getInFightMessage());
                 return true;
             }

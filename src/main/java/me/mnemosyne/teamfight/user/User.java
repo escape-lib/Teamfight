@@ -3,6 +3,7 @@ package me.mnemosyne.teamfight.user;
 import fr.mrmicky.fastboard.FastBoard;
 import lombok.Getter;
 import lombok.Setter;
+import me.mnemosyne.teamfight.TeamfightPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
@@ -15,7 +16,7 @@ public class User {
     private UUID playerUUID;
 
     private boolean isOnline;
-    private boolean isInSpawn;
+    private TeamfightPlugin.PLAYER_PLACE_FLAG place;
     private boolean isTagged;
     private boolean inBuildMode;
 
@@ -28,6 +29,6 @@ public class User {
         this.teamScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 
         this.isOnline = true;
-        this.isInSpawn = true;
+        this.place = TeamfightPlugin.PLAYER_PLACE_FLAG.PLAYER_SPAWN;
     }
 }

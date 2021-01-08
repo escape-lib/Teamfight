@@ -15,7 +15,7 @@ public class ScoreboardManager {
     public Collection<String> getUserScoreboard(User user){
         String format = "";
 
-        if(user.isInSpawn()){
+        if(user.getPlace() == TeamfightPlugin.PLAYER_PLACE_FLAG.PLAYER_SPAWN){
             if(Bukkit.getPlayer(user.getPlayerUUID()).hasPermission("teamfight.staff")){
                 format = ConfigStore.getSpawnStaffScoreboard();
             } else {

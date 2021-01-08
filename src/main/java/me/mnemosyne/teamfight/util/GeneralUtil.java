@@ -14,7 +14,7 @@ public class GeneralUtil {
         player.teleport(Bukkit.getWorld("world").getSpawnLocation());
         User user = TeamfightPlugin.getUserManager().getUser(player);
 
-        user.setInSpawn(true);
+        user.setPlace(TeamfightPlugin.PLAYER_PLACE_FLAG.PLAYER_SPAWN);
         TeamfightPlugin.getUserManager().updateUser(user);
     }
 

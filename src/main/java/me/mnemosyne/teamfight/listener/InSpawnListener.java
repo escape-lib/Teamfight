@@ -27,7 +27,7 @@ public class InSpawnListener implements Listener {
         }
         User user = TeamfightPlugin.getUserManager().getUser((Player)event.getEntity());
 
-        if(user.isInSpawn()) { event.setCancelled(true); }
+        if(user.getPlace() == TeamfightPlugin.PLAYER_PLACE_FLAG.PLAYER_SPAWN) { event.setCancelled(true); }
     }
 
     @EventHandler
@@ -37,7 +37,7 @@ public class InSpawnListener implements Listener {
         }
         User user = TeamfightPlugin.getUserManager().getUser((Player)event.getEntity());
 
-        if(user.isInSpawn()) { event.setCancelled(true); }
+        if(user.getPlace() == TeamfightPlugin.PLAYER_PLACE_FLAG.PLAYER_SPAWN) { event.setCancelled(true); }
     }
 
     @EventHandler

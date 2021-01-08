@@ -38,6 +38,12 @@ public class TeamfightPlugin extends JavaPlugin {
     @Getter private Message message;
     @Getter private GameInventory gameInventory;
 
+    public static enum PLAYER_PLACE_FLAG{
+        PLAYER_SPAWN,
+        PLAYER_FIGHT,
+        PLAYER_SPECTATOR
+    }
+
     @Override
     public void onEnable(){
 

@@ -37,7 +37,7 @@ public class UserJoinListener implements Listener {
                 ConfigStore.getScoreboardSpacer(),
                 ConfigStore.getScoreboardSpacer());
 
-        user.setInSpawn(true);
+        user.setPlace(TeamfightPlugin.PLAYER_PLACE_FLAG.PLAYER_SPAWN);
         user.setUserFastboard(userBoard);
     }
 }
