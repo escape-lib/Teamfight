@@ -30,6 +30,7 @@ public class Message {
      private final String teamPlayerHasLeftMessage;
      private final String localPlayerHasLeftMessage;
      private final String cannotDoThisAsLeaderMessage;
+     private final String cannotDoThisToTeamMembersMessage;
 
     public Message(){
         chatSpacer = ChatColourUtil.convert("&7&m--------------------------------");
@@ -68,5 +69,6 @@ public class Message {
         cannotDoThisAsLeaderMessage = ChatColourUtil.convert("&cYou cannot do this while you are leader!");
         localPlayerHasLeftMessage = ChatColourUtil.convert("&fYou have left the team");
         teamPlayerHasLeftMessage = ChatColourUtil.convert("&7%player_name% &fhas left the team");
+        cannotDoThisToTeamMembersMessage = ChatColourUtil.convert("&cYou cannot do this to team members!");
     }
 }

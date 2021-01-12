@@ -11,6 +11,7 @@ public class TeamCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage("You cannot execute this command from console!");
+            return true;
         }
 
         Player player = (Player) sender;
@@ -21,6 +22,7 @@ public class TeamCommand implements CommandExecutor {
             return true;
         }
 
+        args[0] = args[0].toLowerCase();
         String firstArg = args[0];
         TeamSubcommandHandler teamSubcommandHandler = new TeamSubcommandHandler(player, args);
 
@@ -30,7 +32,7 @@ public class TeamCommand implements CommandExecutor {
                 break;
 
             case "join":
-
+                teamSubcommandHandler.joinTeam();
                 break;
 
             case "invite":
@@ -52,6 +54,10 @@ public class TeamCommand implements CommandExecutor {
             case "show":
             case "who":
                 teamSubcommandHandler.showTeam();
+                break;
+
+            case "leave":
+                teamSubcommandHandler.leaveTeam();
                 break;
 
             default:

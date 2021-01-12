@@ -102,24 +102,26 @@ public class TeamSubcommandHandler {
 
 
         String captainsString = "&fCaptains: &a";
-        for(String name : captainsNames){
-            captainsString += name + "&7,&a";
-        }
-        if(captainsString.endsWith(",")){
-            captainsString = captainsString.substring(0, captainsString.length() - 1);
-        } else {
+        if(captainsNames == null || captainsNames.isEmpty()){
             captainsString += ChatColourUtil.convert("&7None");
+        } else {
+            for(String name : captainsNames){
+                captainsString += name + "&7,&a";
+            }
+
+            captainsString = captainsString.substring(0, captainsString.length() - 1);
         }
 
 
         String membersString = "&fMembers: &a";
-        for(String name : membersNames){
-            membersString += name + "&7,&a";
-        }
-        if(membersString.endsWith(",")){
-            membersString = membersString.substring(0, membersString.length() - 1);
-        } else {
+        if(membersNames == null || membersNames.isEmpty()){
             membersString += ChatColourUtil.convert("&7None");
+        } else {
+            for(String name : membersNames){
+                membersString += name + "&7,&a";
+            }
+
+            captainsString = captainsString.substring(0, captainsString.length() - 1);
         }
 
 

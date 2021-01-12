@@ -13,6 +13,7 @@ public class BuildCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage("You cannot execute this command from console!");
+            return true;
         }
 
         Player player = (Player) sender;

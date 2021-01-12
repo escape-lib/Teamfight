@@ -11,6 +11,7 @@ public class ArenaCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage("You cannot execute this command from console!");
+            return true;
         }
 
         Player player = (Player) sender;
@@ -21,6 +22,7 @@ public class ArenaCommand implements CommandExecutor {
             return true;
         }
 
+        args[0] = args[0].toLowerCase();
         String firstArg = args[0];
 
 

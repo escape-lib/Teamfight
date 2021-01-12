@@ -10,6 +10,7 @@ import me.mnemosyne.teamfight.constant.GameInventory;
 import me.mnemosyne.teamfight.constant.Message;
 import me.mnemosyne.teamfight.listener.*;
 import me.mnemosyne.teamfight.nametag.NametagHandler;
+import me.mnemosyne.teamfight.protect.SwBlockProtectionListener;
 import me.mnemosyne.teamfight.scoreboard.ScoreboardManager;
 import me.mnemosyne.teamfight.scoreboard.schedule.UpdateScoreboardSchedule;
 import me.mnemosyne.teamfight.team.TeamCommand;
@@ -94,6 +95,7 @@ public class TeamfightPlugin extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new TeamPrefixChatListener(), this);
         this.getServer().getPluginManager().registerEvents(new JoinCacheListener(), this);
         this.getServer().getPluginManager().registerEvents(new UnacceptedCommandListener(), this);
+        this.getServer().getPluginManager().registerEvents(new SwBlockProtectionListener(), this);
     }
 
     private void setupCommands(){
