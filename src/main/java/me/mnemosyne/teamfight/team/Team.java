@@ -39,7 +39,11 @@ public class Team {
     }
 
     public int getPlayerCount(){
-        return 1 + captainsUUIDs.size() + membersUUIDs.size();
+        return this.getUUIDs().size();
+    }
+
+    public int getOnlinePlayerCount(){
+        return this.getOnlinePlayers().size();
     }
 
     public Collection<Player>getOnlinePlayers(){

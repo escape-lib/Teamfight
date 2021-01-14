@@ -1,5 +1,6 @@
 package me.mnemosyne.teamfight.cache;
 
+import lombok.Setter;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -8,8 +9,8 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class PlayerCache {
-    private final HashMap<UUID, String> uuidStringCacheMap;
-    private final HashMap<String, UUID> stringUUIDCacheMap;
+    @Setter private HashMap<UUID, String> uuidStringCacheMap;
+    @Setter private HashMap<String, UUID> stringUUIDCacheMap;
 
     public PlayerCache(){
         this.uuidStringCacheMap = new HashMap<>();
@@ -20,7 +21,14 @@ public class PlayerCache {
         if(uuidStringCacheMap.containsKey(player.getUniqueId())
                 || stringUUIDCacheMap.containsValue(player.getUniqueId())){
 
-            return;
+
+            /*checking if player has changed ign*/
+
+            String cachePlayerName = getPlayerNameByUUID(player.getUniqueId());
+            if(cachePlayerName.equals(player.getName())){ return; }
+
+            uuidStringCacheMap.remove(player.getUniqueId());
+            stringUUIDCacheMap.remove(cachePlayerName);
         }
 
         uuidStringCacheMap.put(player.getUniqueId(), player.getName());

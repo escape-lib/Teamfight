@@ -92,38 +92,68 @@ public class TeamSubcommandHandler {
 
     private String showTeam(Team team){
         String teamLeaderName = team.getTeamLeaderName();
-        Collection<String> captainsNames = team.getCaptainsNames();
-        Collection<String> membersNames = team.getMembersNames();
+        Collection<UUID> captainsUUIDs = team.getCaptainsUUIDs();
+        Collection<UUID> membersUUIDs = team.getMembersUUIDs();
 
 
         String build = ChatColourUtil.convert(
-                "\n\n" + TeamfightPlugin.getInstance().getMessage().getChatSpacer() + "\n&7Team: &6" + team.getTeamName() + " &7[&a" + team.getPlayerCount() + " Online&7]\n" +
+                "\n\n" + TeamfightPlugin.getInstance().getMessage().getChatSpacer() + "\n&7Team: &6" + team.getTeamName() + " &7[&a" + team.getOnlinePlayerCount() + " Online&7]\n" +
                         "&fLeader: &a" + teamLeaderName + "\n");
 
-
         String captainsString = "&fCaptains: &a";
-        if(captainsNames == null || captainsNames.isEmpty()){
+        if(captainsUUIDs == null || captainsUUIDs.isEmpty()){
             captainsString += ChatColourUtil.convert("&7None");
         } else {
-            for(String name : captainsNames){
-                captainsString += name + "&7,&a";
+            Player lastPlayer = null;
+
+            for(UUID uuid : captainsUUIDs){
+
+                String itPlayerName = TeamfightPlugin.getInstance().getPlayerCache().getPlayerNameByUUID(uuid);
+                Player itPlayer = Bukkit.getPlayer(uuid);
+
+                if(itPlayer == null){
+                    captainsString += "&7" + itPlayerName + ",";
+                } else {
+                    captainsString += "&a" + itPlayerName + "&7,";
+                }
+
+                lastPlayer = itPlayer;
             }
 
-            captainsString = captainsString.substring(0, captainsString.length() - 1);
+            if(lastPlayer == null){
+                captainsString = captainsString.substring(0, captainsString.length() - 1);
+            } else {
+                captainsString = captainsString.substring(0, captainsString.length() - 3);
+            }
         }
 
 
         String membersString = "&fMembers: &a";
-        if(membersNames == null || membersNames.isEmpty()){
+        if(membersUUIDs == null || membersUUIDs.isEmpty()){
             membersString += ChatColourUtil.convert("&7None");
         } else {
-            for(String name : membersNames){
-                membersString += name + "&7,&a";
+            Player lastPlayer = null;
+
+            for(UUID uuid : membersUUIDs){
+
+                String itPlayerName = TeamfightPlugin.getInstance().getPlayerCache().getPlayerNameByUUID(uuid);
+                Player itPlayer = Bukkit.getPlayer(uuid);
+
+                if(itPlayer == null){
+                    membersString += "&7" + itPlayerName + ",";
+                } else {
+                    membersString += "&a" + itPlayerName + "&7,";
+                }
+
+                lastPlayer = itPlayer;
             }
 
-            captainsString = captainsString.substring(0, captainsString.length() - 1);
+            if(lastPlayer == null){
+                membersString = membersString.substring(0, membersString.length() - 1);
+            } else {
+                membersString = membersString.substring(0, membersString.length() - 3);
+            }
         }
-
 
         build += ChatColourUtil.convert(
                 captainsString + "\n" +
@@ -213,7 +243,7 @@ public class TeamSubcommandHandler {
         }
 
         if(userTeam.isInTeam(targetPlayer.getUniqueId())){
-            player.sendMessage(TeamfightPlugin.getInstance().getMessage().getPlayerIsInTeamMessage());
+            player.sendMessage(TeamfightPlugin.getInstance().getMessage().getPlayerInviteIsInTeamMessage());
             return;
 
         } else if (userTeam.getPendingInviteRequests().contains(targetPlayer.getUniqueId())){
@@ -292,6 +322,8 @@ public class TeamSubcommandHandler {
         pendingInvites.remove(player.getUniqueId());
         teamToBeJoined.addPlayer(player);
 
+        teamToBeJoined.setPendingInviteRequests(pendingInvites);
+
         teamToBeJoined.sendMessageToTeam(TeamfightPlugin.getInstance().getMessage().getPlayerHasJoinedTeamMessage().replace("%player_name%", player.getName()));
 
         TeamfightPlugin.getInstance().getTeamManager().updateTeam(teamToBeJoined);
@@ -312,8 +344,8 @@ public class TeamSubcommandHandler {
             player.sendMessage(TeamfightPlugin.getInstance().getMessage().getOfflinePlayerMessage());
             return;
 
-        } else if(userTeam.isInTeam(targetPlayerUUID)) {
-            player.sendMessage(TeamfightPlugin.getInstance().getMessage().getPlayerIsInTeamMessage());
+        } else if(!userTeam.isInTeam(targetPlayerUUID)) {
+            player.sendMessage(TeamfightPlugin.getInstance().getMessage().getPlayerIsNotInYourTeamMessage());
             return;
         }
 
@@ -323,7 +355,7 @@ public class TeamSubcommandHandler {
         String localKickMessage = TeamfightPlugin.getInstance().getMessage().getLocalPlayerHasBeenKickedMessage().replace("%team_name%", userTeam.getTeamName());
 
         if(targetPlayer != null){
-            player.sendMessage(localKickMessage);
+            targetPlayer.sendMessage(localKickMessage);
         }
         userTeam.sendMessageToTeam(teamKickMessage);
 
@@ -339,11 +371,15 @@ public class TeamSubcommandHandler {
 
         userTeam.removePlayer(player.getUniqueId());
 
-        String teamLeaveMessage = TeamfightPlugin.getInstance().getMessage().getTeamPlayerHasLeftMessage().replace("%player_name", player.getName());
+        String teamLeaveMessage = TeamfightPlugin.getInstance().getMessage().getTeamPlayerHasLeftMessage().replace("%player_name%", player.getName());
 
         player.sendMessage(TeamfightPlugin.getInstance().getMessage().getLocalPlayerHasLeftMessage());
         userTeam.sendMessageToTeam(teamLeaveMessage);
 
         TeamfightPlugin.getInstance().getTeamManager().updateTeam(userTeam);
+    }
+
+    public void listTeams(){
+
     }
 }

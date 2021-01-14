@@ -16,7 +16,7 @@ public class Message {
      private final String notLeaderMessage;
      private final String noTeamFoundMessage;
      private final String invitingMessage;
-     private final String playerIsInTeamMessage;
+     private final String playerInviteIsInTeamMessage;
      private final String playerUninviteIsInTeamMessage;
      private final String teamExistsMessage;
      private final String isInvitingToTeamMessage;
@@ -31,6 +31,7 @@ public class Message {
      private final String localPlayerHasLeftMessage;
      private final String cannotDoThisAsLeaderMessage;
      private final String cannotDoThisToTeamMembersMessage;
+     private final String playerIsNotInYourTeamMessage;
 
     public Message(){
         chatSpacer = ChatColourUtil.convert("&7&m--------------------------------");
@@ -55,7 +56,7 @@ public class Message {
         notLeaderMessage = ChatColourUtil.convert("&cYou are not the leader of this team!");
         noTeamFoundMessage = ChatColourUtil.convert("&cNo matching team or member with name %udefined%");
         invitingMessage = ChatColourUtil.convert("&7%inviting_player% &fis inviting you to join the team &6%team_name%&f. Please type &7/t join %team_name% &fto join the team");
-        playerIsInTeamMessage = ChatColourUtil.convert("&cYou cannot invite players that are in your team!");
+        playerInviteIsInTeamMessage = ChatColourUtil.convert("&cYou cannot invite players that are in your team!");
         playerUninviteIsInTeamMessage = ChatColourUtil.convert("&cYou cannot uninvite players that are in your team!");
         teamExistsMessage = ChatColourUtil.convert("&cTeam with name %team_name% already exists!");
         isInvitingToTeamMessage = ChatColourUtil.convert("&7%inviting_player% &fhas invited &7%invited_player% &fto join the team");
@@ -70,5 +71,6 @@ public class Message {
         localPlayerHasLeftMessage = ChatColourUtil.convert("&fYou have left the team");
         teamPlayerHasLeftMessage = ChatColourUtil.convert("&7%player_name% &fhas left the team");
         cannotDoThisToTeamMembersMessage = ChatColourUtil.convert("&cYou cannot do this to team members!");
+        playerIsNotInYourTeamMessage = ChatColourUtil.convert("&cThis player is not in your team!");
     }
 }
