@@ -60,6 +60,10 @@ public class TeamCommand implements CommandExecutor {
                 teamSubcommandHandler.leaveTeam();
                 break;
 
+            case "list":
+                teamSubcommandHandler.listTeams();
+                break;
+
             default:
                 player.sendMessage(TeamfightPlugin.getInstance().getMessage().getTeamUsageMessage());
                 break;

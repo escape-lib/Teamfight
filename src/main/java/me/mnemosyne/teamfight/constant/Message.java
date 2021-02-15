@@ -32,6 +32,8 @@ public class Message {
      private final String cannotDoThisAsLeaderMessage;
      private final String cannotDoThisToTeamMembersMessage;
      private final String playerIsNotInYourTeamMessage;
+     private final String cannotDoThisWhileTeamInFightMessage;
+     private final String cannotDoThisToYourselfMessage;
 
     public Message(){
         chatSpacer = ChatColourUtil.convert("&7&m--------------------------------");
@@ -43,6 +45,7 @@ public class Message {
                         "&f/t invite &7<player>\n" +
                         "&f/t uninvite &7<player>\n" +
                         "&f/t kick &7<player>\n" +
+                        "&f/t list\n" +
                         "&f/t leave\n" +
                         "&f/t disband\n"
                         + chatSpacer);
@@ -72,5 +75,7 @@ public class Message {
         teamPlayerHasLeftMessage = ChatColourUtil.convert("&7%player_name% &fhas left the team");
         cannotDoThisToTeamMembersMessage = ChatColourUtil.convert("&cYou cannot do this to team members!");
         playerIsNotInYourTeamMessage = ChatColourUtil.convert("&cThis player is not in your team!");
+        cannotDoThisWhileTeamInFightMessage = ChatColourUtil.convert("&cYou cannot do this while your team is in a fight!");
+        cannotDoThisToYourselfMessage = ChatColourUtil.convert("&cYou cannot do this to yourself!");
     }
 }
