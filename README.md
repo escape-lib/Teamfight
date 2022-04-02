@@ -2,6 +2,8 @@
 
 GitHub repo for plugin Teamfight intended for the boxfight server Hera.
 
+code is pretty garb btw
+
 ### TODO
 
 - fix new player cache by comparing new player name to old
